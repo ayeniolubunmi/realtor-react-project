@@ -23,7 +23,6 @@ export default function SignUp() {
   }
   async function onSubmit(e){
     e.preventDefault();
-
     try {
       const auth = getAuth();
       const userCredential = await createUserWithEmailAndPassword(auth,email,password);
@@ -33,7 +32,7 @@ export default function SignUp() {
       const user = userCredential.user;
       const formDataCopy = {...formData}
       delete formDataCopy.password
-      formDataCopy.timestamp = serverTimestamp;
+      formDataCopy.timestamp = serverTimestamp();
       await setDoc(doc(db, "users", user.uid), formData);
       navigate('/')
     } catch (error) {
