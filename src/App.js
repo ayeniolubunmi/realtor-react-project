@@ -10,7 +10,7 @@ import Header from './components/Header'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './components/PrivateRoute'
-import { db } from './firebase'
+import CreatingLsting from './Pages/CreatingLsting'
 
 function App() {
   return (
@@ -22,6 +22,9 @@ function App() {
           <Route path='/forgotpassword' element={<ForgotPassword/>}/>
           <Route path='/profile' element={<PrivateRoute/>}>
             <Route path='/profile' element={<Profile />}/>
+          </Route>
+          <Route path='/create-listing' element={<PrivateRoute/>}>
+            <Route path='/create-listing' element={<CreatingLsting/>}/>
           </Route>
           <Route path='/offers' element={<Offers />}/>
           <Route path='/signin' element={<SignIn />}/>

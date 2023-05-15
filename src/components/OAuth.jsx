@@ -3,6 +3,7 @@ import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import React from 'react'
 import {FcGoogle} from 'react-icons/fc'
 import { db } from '../firebase';
+import { toast } from 'react-toastify';
 
 export default function OAuth() {
 
@@ -24,7 +25,7 @@ export default function OAuth() {
         })
       }
     } catch (error) {
-      
+      toast.error("couldn't authorize with google")
     }
   }
   return (

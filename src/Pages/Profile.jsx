@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router';
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
 import { updateDoc, doc } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
+import {FcHome} from 'react-icons/fc';
 
 export default function Profile() {
   const auth = getAuth();
@@ -35,6 +37,7 @@ export default function Profile() {
       await updateDoc(docRef, {
         name:name,
       })
+      toast.success("Profile details updated")
     } catch (error) {
       toast.error("Could not update the profile")
     }
@@ -74,6 +77,15 @@ export default function Profile() {
               </p>
             </div>
           </form>
+          <button type="submit" 
+          className='w-full
+           bg-blue-600 
+           px-7 py-3 text-sm shadow rounded text-white uppercase text-lg transition duration-200 active:bg-blue-800'>
+            <Link to="/create-listing" className='flex justify-center items-center active:bg-blue-800 '>
+              <FcHome className='mr-4 rounded-full bg-red-400 p-1 text-3xl'/>
+              Rent or sell home
+            </Link>
+          </button>
         </div>
       </section>
     </>
