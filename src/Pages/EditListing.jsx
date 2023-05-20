@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Spinner from '../components/Spinner';
 import { toast } from 'react-toastify';
 import {getAuth} from 'firebase/auth';
 import { getDownloadURL, getStorage, ref, uploadBytes,uploadBytesResumable } from "firebase/storage"
 import {v4 as uuidv4} from 'uuid'
 import { db } from '../firebase';
-import {collection, serverTimestamp, getDoc, addDoc} from 'firebase/firestore';
-import { useNavigate } from 'react-router';
+import {collection, serverTimestamp, getDoc, addDoc, doc, updateDoc} from 'firebase/firestore';
+import { useNavigate, useParams } from 'react-router';
 
 
 export default function CreatingLsting() {
   const auth = getAuth();
   const navigate = useNavigate()
   const[loading, setLoading] = useState(false);
+  const [listing, setListing] = useState(null);
   const [geolocationEnabled, setGeolocationEnable] = useState(false);
   const[formData, setFormData] = useState({
     type:"rent",
@@ -43,6 +44,29 @@ export default function CreatingLsting() {
     discountedprice, 
     parkingspot, 
     furnished, latitude, longitude, images} = formData;
+    const params = useParams()
+    useEffect(() => {
+        setLoading(false);
+        async function fetchListing(){
+            const docRef = doc(db, "listing", params.listingId);
+            const docSnap = getDoc(docRef);
+            if(docSnap.exists()){
+                setListing(docSnap.data());
+                setFormData({...docSnap.doc()})
+                setLoading(false)
+            }else{
+                navigate('/')
+                toast.error("Listing does not exist");
+            }
+        }
+        fetchListing(); 
+    }, [navigate, params.listingId])
+    useEffect(() => {
+        if(listing && listing.userRef !== auth.currentUser.id){
+            toast.error("You can't edit listing");
+            navigate('/');
+        }
+    }, [auth.currentUser.id])
     function onChange(e){
       let boolean = null;
       if(e.target.value === true){
@@ -146,7 +170,7 @@ export default function CreatingLsting() {
   !formDataCopy.offer && delete formDataCopy.discountedprice;
   delete formDataCopy.latitude;
   delete formDataCopy.longitude;
-  const docRef = addDoc(collection(db,"listings"),formData);
+  const docRef = updateDoc(doc(db,"listings", params.listingId), formData);
 setLoading(false);
 toast.successful("");
 navigate(`{/category/${formDataCopy.type}/${docRef}}`);
